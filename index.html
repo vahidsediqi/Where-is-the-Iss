@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Blog</title>
+    
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="crossorigin=""/>
+     <!-- Make sure you put this AFTER Leaflet's CSS -->
+ <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+ integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+ crossorigin=""></script>
+  
+ <style>
+     #issMap { height: 400px; }
+     body{
+         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+     }
+
+     .map-wrapper{
+         max-width: 75%;
+         margin: auto;
+
+     }
+ </style>
+</head>
+<body>
+      
+    <div class="map-wrapper">
+        <h1> Where is the International Space Station</h1>
+        <span>Coded By Vahid Sediqi</span>
+        <br>
+        <span>API from: wheretheiss.at</span>
+        <span>Used: leafletjs & OpendStreet map</span>
+        <!--  -->
+        <div id="issMap">
+        </div>
+
+        <span id="lat"></span>
+        <br>
+        <span id="log"></span>
+    </div>
+
+
+
+
+    <script>
+
+        // icon
+
+        const myIcon = L.icon({
+        iconUrl: 'iss.png',
+        iconSize: [],
+        iconAnchor: [25, 16],
+});
+
+      const mymap = L.map('issMap').setView([0, 0], 1);
+      const marker = L.marker([0, 0], {icon: myIcon}).addTo(mymap);
+
+      const attribution = 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>';
+      const tileUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+      const tiles = L.tileLayer(tileUrl, { attribution });
+
+      tiles.addTo(mymap);
+      const url = ('https://api.wheretheiss.at/v1/satellites/25544');
+      
+      async function getData(){
+          const response = await fetch(url);
+          const data = await response.json();
+          const lat = data.latitude;
+          const log = data.longitude;
+          console.log(lat, log);
+          document.getElementById('lat').innerHTML = "Latitude " + lat;
+          document.getElementById('log').innerHTML = "Longitude " + log;
+
+          marker.setLatLog([lat, log]);
+          mymap.setView([lat, log], 2);
+      }
+
+        getData();
+
+    </script>
+</body>
+</html>
